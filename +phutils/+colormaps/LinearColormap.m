@@ -1,4 +1,17 @@
 classdef LinearColormap < handle
+%LINEARCOLORMAP   generates a linear colormap
+%
+% Usage:
+%    cm = LINEARCOLORMAP(m) genertaes a m-by-3 colormap
+%    
+%    cm.addColor(pos, [r g b]);
+%       adds the color specified by r g b to the colormap. pos should be a
+%       relative position. To add at position n (with n<=m) use
+%       cm.addColor(n/m, ...). If not color is specified for pos=0, black
+%       is selected, if no color is specified for pos=1, white is selected.
+%
+%    cmap = cm.getCM();
+%       returns the colormap.
     properties (Access = protected)
         length 
         colors
