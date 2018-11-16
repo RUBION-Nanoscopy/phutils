@@ -26,11 +26,10 @@ end
 
 k = m-1;
 
-n = fix(3/8*k);
+cm = phutils.colormaps.LinearColormap(k);
+cm.addColor(1/3, [1 0 0 ]);
+cm.addColor(2/3, [1 1 0 ]);
 
-r = [(1:n)'/n; ones(k-n,1); 0];
-g = [zeros(n,1); (1:n)'/n; ones(k-2*n,1); 0];
-b = [zeros(2*n,1); (1:k-2*n)'/(k-2*n); 1];
+h = cm.getCM();
 
-
-h = [r g b];
+h(end+1,:) = [0 0 1];
