@@ -20,4 +20,4 @@ if nargin < 1
       m = size(f.Colormap,1);
    end
 end
-cm = red(m)+blue(m);
+cm = phutils.colormaps.red(m)+phutils.colormaps.blue(m);
