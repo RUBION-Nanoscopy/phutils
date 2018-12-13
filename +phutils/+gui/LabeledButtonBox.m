@@ -12,26 +12,23 @@ classdef LabeledButtonBox < uix.HBox
         bbox
         text
         
-        Label_ = 'Label'
-        LabelBackgroundColor_
-        LabelColor_
-        LabelFontSize_
     end
     properties (SetAccess = private)
         ready = false
     end
     methods
         function self = LabeledButtonBox( varargin )
-            self.LabelBackgroundColor_ = phutils.gui.getDefaultPanelBG()*.75;
-            self.LabelColor_ = phutils.gui.getDefaultPanelBG()*.25;
+            bg = phutils.gui.getDefaultPanelBG()*.75;
+            fg = phutils.gui.getDefaultPanelBG()*.25;
+            
             vb = uix.VBox( 'Parent', self );
             self.bbox = uix.HButtonBox(...
                 'Parent', vb ...
             );
             self.text = uix.Text(...
                 'Parent', vb, ...  
-                'BackgroundColor', self.LabelBackgroundColor_, ...
-                'ForegroundColor', self.LabelColor_, ...
+                'BackgroundColor', bg, ...
+                'ForegroundColor', fg, ...
                 'String', self.Label_ ...
             );
             uix.Empty('Parent', self);
@@ -45,7 +42,27 @@ classdef LabeledButtonBox < uix.HBox
             self.Widths=[0 -1];
             vb.Heights=[36, 16];
         end
+       
+        function set.Label(self, l)
+            self.text.String = l;
+        end
+        function l = get.Label(self)
+            l = self.text.String;
+        end
         
+        function set.LabelBackgroundColor( self, c )
+            self.text.BackgroundColor = c;
+        end
+        function c = get.LabelBackgroundColor( self )
+            c = self.text.BackgroundColor;
+        end
+        
+        function set.LabelColor ( self, c )
+            self.text.ForegroundColor = c;
+        end
+        function c = get.LabelColor ( self )
+            c = self.text.ForegroundColor;
+        end
     end
     
     methods (Access = protected )
