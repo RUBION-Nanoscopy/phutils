@@ -3,7 +3,7 @@ classdef ProgressBar < matlab.mixin.SetGet
 %
 % prgbar = phtuils.gui.ProgressBar(p1,v1,p2,v2,...)
 %      Creates a ProgressBar with p1 set to v2, p2 to v2 etc. For valid
-%      values for the properties see below. ProgressBAr creates a figure
+%      values for the properties see below. ProgressBar creates a figure
 %      with one axes in this case. The ProgressBar fills (more or less) the
 %      full figure.
 %
@@ -21,7 +21,7 @@ classdef ProgressBar < matlab.mixin.SetGet
 %   AutoLabel: (true|false) If true, the Labl is automatically updated.
 %              Defaults to true.
 %   AutoLabelFormat: format string (for sprintf) used to format the
-%                    automatic labeöl. Defaults to '%3.1g%%'
+%                    automatic label. Defaults to '%3.1g%%'
 %   Fraction: (0<= Fraction <=1) Fraction of prgress shown. You can use
 %             this to update the bar. Defaults to 0.
 %   XPadding: (0<=xpadding < .5 || xpadding >=1) Padding from left and
