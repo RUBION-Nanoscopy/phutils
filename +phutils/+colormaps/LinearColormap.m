@@ -2,7 +2,7 @@ classdef LinearColormap < handle
 %LINEARCOLORMAP   generates a linear colormap
 %
 % Usage:
-%    cm = LINEARCOLORMAP(m) genertaes a m-by-3 colormap
+%    cm = LINEARCOLORMAP(m) generates a m-by-3 colormap
 %    
 %    cm.addColor(pos, [r g b]);
 %       adds the color specified by r g b to the colormap. pos should be a
@@ -12,6 +12,14 @@ classdef LinearColormap < handle
 %
 %    cmap = cm.getCM();
 %       returns the colormap.
+%
+%    cm.saveAs(filename)
+%       saves the colormap as a custom colormap in the namespace
+%       phutils.colormaps.custom. <filename> should be a valid matlab
+%       function identifier that starts with a lowercase letter
+%
+% See also: phutils.colormaps.tools.rewriteColormapList 
+
     properties (Access = protected)
         length 
         colors
@@ -20,10 +28,15 @@ classdef LinearColormap < handle
     
     methods
         function self = LinearColormap( m )
+            % Generate a LinearColormapObject of size m
             self.length = m;
         end
         
         function addColor(self, pos, rgb)
+            % add a color to the colormap
+            %
+            % Usage:
+            %     
             if any(self.positions == pos)
                 self.colors(self.positions == pos,:) = rgb;
             else
@@ -47,16 +60,51 @@ classdef LinearColormap < handle
             end
             cm = zeros(self.length, 3);
             pos = fix(self.positions(idxs) * (self.length-1) ) + 1; 
-            colors = self.colors(idxs,:);
+            colors = self.colors(idxs,:); %#ok<PROP>
             for i = 1:numel(pos)-1
                 for j = 1:3
                     cm(pos(i):pos(i+1),j) = ...
                         linspace(...
                             colors(i,j),colors(i+1,j),...
                             pos(i+1)-pos(i)+1 ...
-                        );
+                        ); %#ok<PROP>
                 end
             end
+        end
+        
+        function saveAs(self, filename)
+            % save the current colormap as
+            % phutils.colormaps.custom.<filename>
+            
+            if strcmp(filename(1), upper(filename(1)))
+                error('phutils:WrongArgument', 'Wrong argument type: First letter of filename must be lowercase');
+            end
+            fn = mfilename('fullpath');
+            parts = strsplit(fn, filesep);
+            path = fullfile(filesep, parts{1:end-1}, '+custom');
+            if exist(path, 'dir') ~= 7
+                mkdir (path);
+            end
+            
+            fid = fopen(fullfile(path, [filename '.m']),'w');
+            fprintf(fid, 'function map = %s (m)\n', filename);
+            fprintf(fid, '    if nargin < 1\n');
+            fprintf(fid, '        f = get(groot,''CurrentFigure'');\n');
+            fprintf(fid, '        if isempty(f)\n');
+            fprintf(fid, '            m = size(get(groot,''DefaultFigureColormap''),1);\n');
+            fprintf(fid, '        else\n');
+            fprintf(fid, '            m = size(f.Colormap,1);\n');
+            fprintf(fid, '        end\n');
+            fprintf(fid, '    end\n');
+            fprintf(fid, '\n');
+            fprintf(fid, '    cm = phutils.colormaps.LinearColormap(m);\n');
+            for i = 1:numel(self.positions)
+                fprintf(fid, '    cm.addColor(%d, [%d %d %d]);\n', self.positions(i), self.colors(i,:)); 
+            end
+            fprintf(fid, '    map = cm.getCM();\n');    
+            fprintf(fid, 'end');
+            fclose(fid);
+            phutils.colormaps.tools.rewriteColormapList();
         end
     end
 end
