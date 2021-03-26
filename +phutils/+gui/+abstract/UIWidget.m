@@ -31,6 +31,7 @@ classdef UIWidget < handle & uiw.mixin.AssignPVPairs
         Grid
         UILabel
         
+        IsConstructing
         
     end
     
@@ -38,6 +39,12 @@ classdef UIWidget < handle & uiw.mixin.AssignPVPairs
     methods
         %% Constructor
         function self = UIWidget( varargin )
+            
+            % Derived classes should set this to false at the end of the
+            % Constructor
+            self.IsConstructing = true;
+            
+            
             self.assignPVPairs( varargin{:} );
             
             % if parent is not set, create a new uifigure
@@ -139,6 +146,19 @@ classdef UIWidget < handle & uiw.mixin.AssignPVPairs
         end
         function c = get.LabelFontColor( self )
             c = self.LabelFontColor_;
+        end
+    end
+    
+    methods (Static)
+        function [args, pargs] = splitArguments( varargin )
+            p = find(strcmp(varargin, 'Parent') == 1);
+            if ~isempty(p)
+                pargs = {'Parent', varargin{p+1}};
+                args = { varargin{1:p-1}, varargin{p+2:end} };
+            else
+                pargs = {};
+                args = varargin;
+            end
         end
     end
     
