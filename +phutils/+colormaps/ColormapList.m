@@ -26,6 +26,7 @@ classdef ColormapList
         Red (phutils.colormaps.red(256))
         Yellow (phutils.colormaps.yellow(256))
         Greenwhite (phutils.colormaps.custom.greenwhite(256))
+        Redblack (phutils.colormaps.custom.redblack(256))
         Redwhite (phutils.colormaps.custom.redwhite(256))
         Yellowwhite (phutils.colormaps.custom.yellowwhite(256))
     end % enumeration

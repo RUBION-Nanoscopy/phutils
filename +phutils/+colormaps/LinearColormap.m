@@ -20,7 +20,7 @@ classdef LinearColormap < handle
 %
 % See also: phutils.colormaps.tools.rewriteColormapList 
 
-    properties (Access = protected)
+    properties (SetAccess = protected, GetAccess = public)
         length 
         colors
         positions 
@@ -82,9 +82,37 @@ classdef LinearColormap < handle
             fn = mfilename('fullpath');
             parts = strsplit(fn, filesep);
             path = fullfile(filesep, parts{1:end-1}, '+custom');
+            
             if exist(path, 'dir') ~= 7
                 mkdir (path);
             end
+            
+            classFilename = [upper(filename(1)) filename(2:end)];
+            classpath = [path filesep '@' classFilename];
+            if exist(classpath, 'dir') ~= 7
+                mkdir(classpath);
+            end
+            fid = fopen(fullfile(classpath, [classFilename '.m']),'w');
+            fprintf(fid, 'classdef %s < phutils.colormaps.LinearColormap\n', classFilename);
+            fprintf(fid, '    methods\n');
+            fprintf(fid, '        function self = %s(m)\n', classFilename);
+            fprintf(fid, '            if nargin < 1\n');
+            fprintf(fid, '                f = get(groot,''CurrentFigure'');\n');
+            fprintf(fid, '                if isempty(f)\n');
+            fprintf(fid, '                    m = size(get(groot,''DefaultFigureColormap''),1);\n');
+            fprintf(fid, '                else\n');
+            fprintf(fid, '                    m = size(f.Colormap,1);\n');
+            fprintf(fid, '                end\n');
+            fprintf(fid, '            end\n');
+            fprintf(fid, '            self = self@phutils.colormaps.LinearColormap(m);\n'); 
+            for i = 1:numel(self.positions)
+                fprintf(fid, '            self.addColor(%d, [%d %d %d]);\n', self.positions(i), self.colors(i,:)); 
+            end
+            fprintf(fid, '        end\n');
+            fprintf(fid, '    end\n');
+            fprintf(fid, 'end\n');
+            fclose(fid);
+            
             
             fid = fopen(fullfile(path, [filename '.m']),'w');
             fprintf(fid, 'function map = %s (m)\n', filename);
@@ -97,10 +125,7 @@ classdef LinearColormap < handle
             fprintf(fid, '        end\n');
             fprintf(fid, '    end\n');
             fprintf(fid, '\n');
-            fprintf(fid, '    cm = phutils.colormaps.LinearColormap(m);\n');
-            for i = 1:numel(self.positions)
-                fprintf(fid, '    cm.addColor(%d, [%d %d %d]);\n', self.positions(i), self.colors(i,:)); 
-            end
+            fprintf(fid, '    cm = phutils.colormaps.custom.%s(m);\n', classFilename);
             fprintf(fid, '    map = cm.getCM();\n');    
             fprintf(fid, 'end');
             fclose(fid);

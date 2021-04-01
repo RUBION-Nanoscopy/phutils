@@ -35,14 +35,7 @@ if nargin < 1
    end
 end
 
-cm = phutils.colormaps.LinearColormap(m);
-cm.addColor(0,     [020 190 200]/255);
-cm.addColor(1,     [255 255 255]/255);
-cm.addColor(10/64, [032 008 000]/255);
-cm.addColor(12/64, [097 024 000]/255);
-cm.addColor(17/64, [212 043 000]/255);
-cm.addColor(38/64, [255 153 000]/255);
-cm.addColor(62/64, [255 255 000]/255);
+cm = phutils.colormaps.Irish(m);
 
 
 i = cm.getCM();
